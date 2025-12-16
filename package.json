@@ -1,0 +1,21 @@
+{
+  "name": "devtinder",
+  "version": "1.0.0",
+  "description": "tinder for devs",
+  "keywords": [
+    "node",
+    "js",
+    "javascript"
+  ],
+  "license": "ISC",
+  "author": "Nishant",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app",
+    "dev": "nodemon src/app"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
