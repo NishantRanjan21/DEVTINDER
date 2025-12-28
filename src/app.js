@@ -3,19 +3,20 @@ const { authorisation } = require("./middleware/authorisation");
 const { connectDB } = require("./config/database");
 const { User } = require("./model/user");
 const app = express();
+// app.use(express.json());
 
 app.post("/signup", async (req, res) => {
   const user = new User({
-    firstName: "Hritik",
-    lastName: "Raj",
-    emailId: "HritikR@gmail.com",
-    password: "Hritik@123"
+    firstName: "Suhash",
+    lastName: "Shukla",
+    emailId: "SuhashS@gmail.com",
+    password: "SuhashS@123",
   });
 
-  try{
+  try {
     await user.save();
     res.send("The data is saved");
-  }catch(err){
+  } catch (err) {
     res.status(500).send("The data is not not saved try again" + err.message);
   }
 });
