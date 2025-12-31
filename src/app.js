@@ -55,6 +55,45 @@ app.get("/fetching", async (req,res) => {
   }
 })
 
+app.delete("/delete", async(req, res) => {
+  const userId = req.body._id;
+  try{
+    const user = await User.findByIdAndDelete(userId);
+    res.send("The data has been deleted successfully!");
+  }
+  catch(err){
+    res.status(400).send("Something went wrong!" + err.message);
+  }
+})
+
+app.patch("/update", async (req, res) => {
+
+  const userId = req.body._id;
+  const data = req.body;
+  try{
+    const user = await User.findByIdAndUpdate(userId, data, {returnDocument:'after'});
+    console.log(user);
+    res.send("data updated successfully");
+  }
+  catch(err){
+    res.status(400).send("Something went wrong" + err.message);
+  }
+})
+
+app.patch("/updatebyemail", async (req, res) => {
+
+  const userId = req.body.emailId;
+  const data = req.body;
+  try{
+    const user = await User.findOneAndUpdate({emailId:userId}, data, {returnDocument:'before'});
+    console.log(user);
+    res.send("data updated successfully");
+  }
+  catch(err){
+    res.status(400).send("Something went wrong" + err.message);
+  }
+})
+
 connectDB()
   .then(() => {
     console.log("The database is now connected");
