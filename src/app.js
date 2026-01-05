@@ -7,8 +7,9 @@ const app = express();
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
-  // console.log(req.body);
+  const data = req.body;
+  const user = new User(data);
+  // console.log(data);
 
   try {
     await user.save();
@@ -18,81 +19,95 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.get("/user", async (req,res) => {
+app.get("/user", async (req, res) => {
   const userEmail = req.body.emailId;
-  try{
-    const users = await User.find({emailId: userEmail});
-    if(users.length === 0){
+  try {
+    const users = await User.find({ emailId: userEmail });
+    if (users.length === 0) {
       res.status(400).send("No user found");
-    }
-    else{
+    } else {
       res.send(users);
     }
-  }
-  catch(err){
+  } catch (err) {
     res.status(400).send("Something went wrong");
   }
-})
+});
 
-app.get("/feed", async (req,res) => {
-  try{
+app.get("/feed", async (req, res) => {
+  try {
     const users = await User.find({});
     res.send(users);
-  }
-  catch(err){
+  } catch (err) {
     res.status(400).send("Something went wrong");
   }
-})
+});
 
-app.get("/fetching", async (req,res) => {
+app.get("/fetching", async (req, res) => {
   const ID = req.body._id;
-  try{
+  try {
     const user = await User.findById(ID);
     res.send(user);
-  }
-  catch(err){
+  } catch (err) {
     res.status(400).send("Sonething went wrong");
   }
-})
+});
 
-app.delete("/delete", async(req, res) => {
+app.delete("/delete", async (req, res) => {
   const userId = req.body._id;
-  try{
+  try {
     const user = await User.findByIdAndDelete(userId);
     res.send("The data has been deleted successfully!");
-  }
-  catch(err){
+  } catch (err) {
     res.status(400).send("Something went wrong!" + err.message);
   }
-})
+});
 
-app.patch("/update", async (req, res) => {
-
-  const userId = req.body._id;
+app.patch("/update/:_id", async (req, res) => {
+  const userId = req.params._id;
   const data = req.body;
-  try{
-    const user = await User.findByIdAndUpdate(userId, data, {returnDocument:'after'});
+  try {
+    ALLOWED_UPDATES = [
+      "firstName",
+      "lastName",
+      "password",
+      "age",
+      "gender",
+      "photoURL",
+      "about",
+      "skills",
+    ];
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+    const user = await User.findByIdAndUpdate(userId, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
     console.log(user);
     res.send("data updated successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong:" + err.message);
   }
-  catch(err){
-    res.status(400).send("Something went wrong" + err.message);
-  }
-})
+});
 
 app.patch("/updatebyemail", async (req, res) => {
-
   const userId = req.body.emailId;
   const data = req.body;
-  try{
-    const user = await User.findOneAndUpdate({emailId:userId}, data, {returnDocument:'before'});
+  try {
+    const user = await User.findOneAndUpdate({ emailId: userId }, data, {
+      returnDocument: "before",
+      runValidators: true,
+    });
     console.log(user);
     res.send("data updated successfully");
-  }
-  catch(err){
+  } catch (err) {
     res.status(400).send("Something went wrong" + err.message);
   }
-})
+});
 
 connectDB()
   .then(() => {
