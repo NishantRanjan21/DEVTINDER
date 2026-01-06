@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      select: false,
+      // select: false,
       validate:{
         validator: (value) => validator.isStrongPassword(value),
         message: "Your password require minimum Length: 8, minimum Lowercase: 1, minimum Uppercase: 1, minimumNumbers: 1, minimum Symbols: 1",
@@ -38,13 +38,13 @@ const userSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
-      required: true,
+      // required: true,
       min: [18, "Age must be atleast 18"],
       max: 100,
     },
     gender: {
       type: String,
-      required: true,
+      // required: true,
       validate(value) {
         if (!["male", "female", "others"].includes(value)) {
           throw new Error("This gender dont exist");
@@ -70,7 +70,7 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
-      required: true,
+      // required: true,
       validate: {
         validator: (v) => v.length > 0 && v.length <= 15,
         message: "The no. of fields should be in between 0 - 15",
