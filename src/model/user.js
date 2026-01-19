@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
   {
@@ -31,10 +33,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       // select: false,
-      validate:{
+      validate: {
         validator: (value) => validator.isStrongPassword(value),
-        message: "Your password require minimum Length: 8, minimum Lowercase: 1, minimum Uppercase: 1, minimumNumbers: 1, minimum Symbols: 1",
-      }
+        message:
+          "Your password require minimum Length: 8, minimum Lowercase: 1, minimum Uppercase: 1, minimumNumbers: 1, minimum Symbols: 1",
+      },
     },
     age: {
       type: Number,
@@ -57,10 +60,10 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default:
         "https://i0.wp.com/e-quester.com/wp-content/uploads/2021/11/placeholder-image-person-jpg.jpg?fit=820%2C678&ssl=1",
-      validate:{
+      validate: {
         validator: (value) => validator.isURL(value),
         message: "Invalid URL",
-      }
+      },
     },
     about: {
       type: String,
@@ -80,8 +83,23 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
+
+userSchema.methods.validatePassword = async function(passwordInputByUser) {
+  const user = this;
+  const hashPassword = user.password;
+  const isValidPassword = await bcrypt.compare(passwordInputByUser, hashPassword);
+  return isValidPassword;
+}
+
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+  return token;
+};
 
 const User = mongoose.model("user", userSchema);
 
