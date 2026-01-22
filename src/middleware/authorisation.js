@@ -3,8 +3,8 @@ const { User } = require("../model/user");
 const useAuth = async (req, res, next) => {
   try {
     const { token } = req.cookies;
-    console.log("Cookies:", req.cookies);
-    console.log("Token:", req.cookies?.token);
+    // console.log("Cookies:", req.cookies);
+    // console.log("Token:", req.cookies?.token);
     if (!token) {
       throw new Error("Token not found!");
     }
