@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt")
 const authRouter = express.Router();
 authRouter.post("/signup", async (req, res) => {
   try {
-    const { firstName, lastName, emailId, password, skills } = req.body;
+    const { firstName, lastName, emailId, password, skills, gender, age, photoURL, about } = req.body;
     //validation of data
     validateSignUpData(req);
     //Encryption of data
@@ -17,6 +17,10 @@ authRouter.post("/signup", async (req, res) => {
       lastName,
       emailId,
       skills,
+      gender,
+      age,
+      about,
+      photoURL,
       password: passwordHash,
     });
     // console.log(data);
@@ -49,6 +53,8 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
+        sameSite: "strict",
+        secure: true,
       });
       res.send("Login successfull!!");
     }
@@ -56,6 +62,15 @@ authRouter.post("/login", async (req, res) => {
     res.status(500).send("ERROR: " + err.message);
   }
 });
+
+authRouter.post("/logout", async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "strict",
+  })
+
+  res.send("Logged out successfully!!")
+})
 
 module.exports = {
     authRouter,
