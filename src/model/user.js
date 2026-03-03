@@ -47,12 +47,17 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      // required: true,
-      validate(value) {
-        if (!["male", "female", "others"].includes(value)) {
-          throw new Error("This gender dont exist");
-        }
+
+      enum: {
+        values: ["male", "female", "others"],
+        message: `{VALUE} is not a valid gender`
       },
+      // required: true,
+      // validate(value) {
+      //   if (!["male", "female", "others"].includes(value)) {
+      //     throw new Error("This gender dont exist");
+      //   }
+      // },
       trim: true,
     },
     photoURL: {
@@ -86,7 +91,7 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-userSchema.methods.validatePassword = async function(passwordInputByUser) {
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const user = this;
   const hashPassword = user.password;
   const isValidPassword = await bcrypt.compare(passwordInputByUser, hashPassword);
@@ -101,7 +106,7 @@ userSchema.methods.getJWT = async function () {
   return token;
 };
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = {
   User,
