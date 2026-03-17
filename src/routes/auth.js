@@ -52,11 +52,11 @@ authRouter.post("/login", async (req, res) => {
       //Adding token to the cookie and sending response back to the user
       res.cookie("token", token, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-        secure: true,
+        // httpOnly: true,
+        // sameSite: "strict",
+        // secure: true,
       });
-      res.send("Login successfull!!");
+      res.send(user);
     }
   } catch (err) {
     res.status(500).send("ERROR: " + err.message);
