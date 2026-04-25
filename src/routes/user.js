@@ -3,7 +3,7 @@ const { useAuth } = require("../middleware/authorisation");
 const ConnectionRequest = require("../model/connectionRequest");
 const { User } = require("../model/user");
 const userRouter = express.Router();
-const USER_SAFE_DATA = "firstName lastName age skills about photoURL";
+const USER_SAFE_DATA = "firstName lastName age skills about photoURL gender";
 userRouter.get("/user/request/recieved", useAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
