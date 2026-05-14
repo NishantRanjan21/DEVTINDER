@@ -36,13 +36,16 @@ profileRouter.patch("/profile/edit", useAuth, async (req, res) => {
     }
 
     const loggedInUser = req.user;
-    console.log(loggedInUser);
+
     Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
     await loggedInUser.save();
-    console.log(loggedInUser);
-    res.send("Profile Edited!");
+
+    res.json({
+      data: loggedInUser,
+      message: "profile edited successfully"
+    })
   } catch (err) {
-    res.status(500).send("ERROR: ", err.message);
+    res.status(500).send("ERROR: "+ err.message);
   }
 });
 
@@ -68,14 +71,14 @@ profileRouter.patch("/profile/updatePassword", useAuth, async (req, res) => {
     if (isSame) {
       throw new Error("New password must be different from old password");
     }
-    
+
     const isValidNewPassword = validator.isStrongPassword(newPassword);
     if (!isValidNewPassword) {
       throw new Error("Enter a Strong Password");
     }
     const passwordHash = await bcrypt.hash(newPassword, 10);
     loggedInUser.password = passwordHash;
-    
+
     await loggedInUser.save();
     res.send("Password updated successfully!");
   } catch (error) {

@@ -80,8 +80,8 @@ const userSchema = new mongoose.Schema(
       type: [String],
       // required: true,
       validate: {
-        validator: (v) => v.length > 0 && v.length <= 15,
-        message: "The no. of fields should be in between 0 - 15",
+        validator: (v) => v.length <= 15,
+        message: "The no. of fields should be lesser than 15",
       },
       set: (v) => v.map((skill) => skill.trim()),
     },
