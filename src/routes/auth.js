@@ -1,12 +1,22 @@
 const express = require("express");
 const { validateSignUpData } = require("../utils/validation");
-const { User } = require("../model/user")
-const bcrypt = require("bcrypt")
+const { User } = require("../model/user");
+const bcrypt = require("bcrypt");
 
 const authRouter = express.Router();
 authRouter.post("/signup", async (req, res) => {
   try {
-    const { firstName, lastName, emailId, password, skills, gender, age, photoURL, about } = req.body;
+    const {
+      firstName,
+      lastName,
+      emailId,
+      password,
+      skills,
+      gender,
+      age,
+      photoURL,
+      about,
+    } = req.body;
     //validation of data
     validateSignUpData(req);
     //Encryption of data
@@ -28,10 +38,13 @@ authRouter.post("/signup", async (req, res) => {
     const savedUser = await user.save();
     const token = await savedUser.getJWT();
 
-      
-      res.cookie("token", token, {
-        maxAge: 7 * 24 * 60 * 60 * 1000,})
-    res.json({message: "The data is saved", data: savedUser});
+    res.cookie("token", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+    res.json({ message: "The data is saved", data: savedUser });
   } catch (err) {
     res.status(500).send("The data is not saved try again " + err.message);
   }
@@ -72,11 +85,11 @@ authRouter.post("/logout", async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     sameSite: "strict",
-  })
+  });
 
-  res.send("Logged out successfully!!")
-})
+  res.send("Logged out successfully!!");
+});
 
 module.exports = {
-    authRouter,
+  authRouter,
 };
